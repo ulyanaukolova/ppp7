@@ -3,7 +3,27 @@ name: Check Style Code
 on:
   push:
     branches:
-      - ''
+      - new_vetochka
 
   pull_request:
+    branches:
+      - new_vetichka
 jobs:
+  checkstyle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download code
+        uses: actions/checkout@v2
+
+      - name: Set version python #смена версии питона v2- это версия
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.11.4'
+
+      - name: Install dependencies
+        run: |
+          pip install flake8
+
+      - name: Run linter
+        run: |
+          flake8 .
