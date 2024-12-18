@@ -15,7 +15,7 @@ jobs:
       - name: Download code
         uses: actions/checkout@v2
 
-      - name: Set version python #смена версии питона v2- это версия
+      - name: Set version python
         uses: actions/setup-python@v2
         with:
           python-version: '3.11.4'
