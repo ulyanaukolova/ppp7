@@ -1,29 +1,45 @@
-name: Check Style Code
+name: XAML Syntax Check
 
 on:
   push:
     branches:
-      - new_vetochka
-
+      - ve
   pull_request:
     branches:
-      - new_vetochka
+      - ve
+
 jobs:
-  checkstyle:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: windows-latest
     steps:
-      - name: Download code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set version python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.11.4'
+    - name: Set up .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0'  # или версия, которую вы используете
 
-      - name: Install dependencies
-        run: |
-          pip install flake8
+    - name: Install XAML Styler
+      run: dotnet tool install -g XamlStyler.Console
 
-      - name: Run linter
-        run: |
-          flake8 .
+    - name: Format XAML files
+      run: |
+        xstyler -d './audiopleer№3/'  # Путь к директории с XAML файлами, укажите верно
+        echo "Formatting complete."
+
+    - name: Show changed files
+      run: |
+        git status --short
+        echo "If there are changes, they will be shown above."
+
+    - name: Check for changes after formatting
+      run: git diff --exit-code
+      continue-on-error: true
+
+    - name: Debugging changes
+      if: failure()
+      run: |
+        echo "The following changes were detected:"
+        git diff
+        echo "Check the above diff for problematic XAML files."
